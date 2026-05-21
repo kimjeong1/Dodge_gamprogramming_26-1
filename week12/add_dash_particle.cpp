@@ -22,10 +22,9 @@
    7. 무적 발동 시 플레이어 깜빡임 → PlayerController::Render()
                               - 무적 중 0.1초 주기로 알파 토글
 --------------------------------------------------------------------------------
- [수업 구조 유지]
-  - ShaderSet / Material(추상) / ColorMaterial  ← 10~11주차 강의 그대로
+  - ShaderSet / Material(추상) / ColorMaterial 
   - Mesh::Create()                              ← GPU 버퍼 자기 소유
-  - MeshRenderer(Mesh*, Material*)              ← 소유권 분리 (강의 6)
+  - MeshRenderer(Mesh*, Material*)              ← 소유권 분리
   - b0: World 행렬 (MeshRenderer)
   - b1: tintColor  (ColorMaterial::Bind)
 --------------------------------------------------------------------------------
@@ -410,7 +409,7 @@ bool CheckAABB(const GameObject& a, const GameObject& b)
 }
 
 // ============================================================
-// MeshRenderer (강의 구조 유지 — 소유권 없이 참조만)
+// MeshRenderer
 // ============================================================
 class MeshRenderer : public Component
 {
@@ -461,14 +460,14 @@ public:
 };
 
 // ============================================================
-// PlayerController (A 담당)
+// PlayerController
 // 12주차 추가: 대시 스킬 (SPACE / 쿨타임 3초)
 //             무적 중 깜빡임은 별도 BlinkRenderer 컴포넌트가 담당
 // ============================================================
 struct DashAfterimage
 {
     float x, y;       // 잔상 위치
-    float alpha;      // 현재 불투명도 (1.0 → 0.0)
+    float alpha;      // 현재 불투명도 (1.0 -> 0.0)
     float lifetime;   // 남은 수명 (초)
 };
 
@@ -571,7 +570,7 @@ public:
                 afterimageTimer -= AFTERIMAGE_INTERVAL;
                 afterimagesLeft--;
 
-                // 시작→끝 선형 보간 위치에 잔상 찍기
+                // 시작->끝 선형 보간 위치에 잔상 찍기
                 float t = 1.0f - (float)afterimagesLeft / AFTERIMAGE_COUNT;
                 DashAfterimage img;
                 img.x = dashStartX + (dashEndX - dashStartX) * t;
@@ -754,7 +753,7 @@ public:
     // 현재 이동 방향으로 DASH_DISTANCE 만큼 순간이동
     void TryDash()
     {
-        float startX = pOwner->posX;   // ← 추가: 시작 위치 저장
+        float startX = pOwner->posX;   // <- 추가: 시작 위치 저장
         float startY = pOwner->posY;
 
         pOwner->posX += lastDir.x * DASH_DISTANCE;
@@ -780,7 +779,7 @@ public:
 };
 
 // ============================================================
-// BlinkRenderer (B 담당 — 12주차 신규)
+// BlinkRenderer
 // 무적 중 0.1초 주기로 플레이어를 깜빡이게 함
 // MeshRenderer 의 색상을 직접 조작하는 방식 대신
 // ColorMaterial 의 알파값을 토글해서 구현
@@ -848,7 +847,7 @@ public:
 const float BlinkRenderer::BLINK_INTERVAL = 0.1f;
 
 // ============================================================
-// ObstacleController (A 담당 - 11주차 이월)
+// ObstacleController
 // ============================================================
 class ObstacleController : public Component
 {
@@ -875,7 +874,7 @@ public:
 };
 
 // ============================================================
-// CooldownBarRenderer (B 담당 — 12주차 신규)
+// CooldownBarRenderer
 // 대시 쿨타임 게이지를 GDI로 화면 좌하단에 렌더링
 // ============================================================
 class CooldownBarRenderer : public Component
@@ -937,7 +936,7 @@ public:
 
 
 // ============================================================
-// ShieldRenderer (B 담당 — 12주차 신규)
+// ShieldRenderer
 // 무적 중 플레이어 주위에 회전하는 육각형 쉴드 테두리를 GDI로 렌더링
 // ============================================================
 class ShieldRenderer : public Component
@@ -1028,7 +1027,7 @@ const float ShieldRenderer::ROTATE_SPEED = 1.8f;
 const float ShieldRenderer::PULSE_SPEED = 4.0f;
 
 // ============================================================
-// TextRenderer (B 담당 - 11주차 이월 + 12주차 UI 추가)
+// TextRenderer
 // ============================================================
 class TextRenderer
 {
@@ -1133,7 +1132,7 @@ public:
 };
 
 // ============================================================
-// GameManager (A 담당)
+// GameManager
 // 12주차 추가: 무적 아이템 스폰 / 획득 판정 / 무적 타이머
 // ============================================================
 class GameManager
@@ -1218,7 +1217,7 @@ public:
         printf("[Game] Reset. PLAYING 시작!\n");
     }
 
-    // ── 장애물 스폰 (오브젝트 풀 방식) ───────────────────
+    //--- 장애물 스폰 ---
     void SpawnObstacles(int count)
     {
         for (int n = 0; n < count; ++n)
@@ -1284,7 +1283,7 @@ public:
         printf("[Item] 무적 아이템 스폰 (%.0f, %.0f)\n", x, y);
     }
 
-    // ── 무적 상태 처리 (12주차 신규) ─────────────────────
+    // ── 무적 상태 처리  ─────────────────────
     void UpdateInvincible(float dt)
     {
         if (!gIsInvincible) return;
@@ -1498,7 +1497,7 @@ public:
 };
 
 // ============================================================
-// 셰이더 소스 (11주차와 동일)
+// 셰이더 소스 
 // b0: World 행렬  b1: tintColor
 // ============================================================
 static const std::string SHADER_SRC = R"(
@@ -1538,7 +1537,7 @@ Mesh* CreateRectMesh(ID3D11Device* device, float halfW, float halfH)
 }
 
 // ============================================================
-// 별 Mesh 생성 헬퍼 (무적 아이템용 — B 담당)
+// 별 Mesh 생성 헬퍼
 // 5각형 별: 바깥 꼭짓점 5개 + 안쪽 꼭짓점 5개 → 삼각형 10개
 // ============================================================
 Mesh* CreateStarMesh(ID3D11Device* device, float outerR, float innerR)
@@ -1605,7 +1604,6 @@ Mesh* CreateMeteorMesh(ID3D11Device* device, float r)
 {
     const int POINTS = 8;
 
-    // jitter 없이 순수 원형으로 먼저 테스트
     float nW = (r / SCREEN_W) * 2.0f;
     float nH = (r / SCREEN_H) * 2.0f;
 
@@ -1652,19 +1650,19 @@ int WINAPI WinMain(HINSTANCE hI, HINSTANCE, LPSTR, int)
         { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
 
-    // ── 셰이더 한 번만 컴파일 & 생성 (강의: 재사용 원칙) ─
+    // ── 셰이더 한 번만 컴파일 & 생성 (재사용) ─
     ShaderSet shaders = gEngine.gfx.CompileAndCreate(SHADER_SRC, ied, 2);
     if (!shaders.vs || !shaders.ps)
     {
         printf("[Error] Shader compile failed.\n"); return -1;
     }
 
-    // ── Mesh 생성 (강의: GPU 버퍼는 Mesh 가 소유) ─────────
+    // ── Mesh 생성 ( GPU 버퍼는 Mesh 가 소유) ─────────
     Mesh* playerMesh = CreateShipMesh(gEngine.gfx.Device, 15.0f);
     Mesh* obsMesh = CreateMeteorMesh(gEngine.gfx.Device, 15.0f);
     Mesh* itemMesh = CreateStarMesh(gEngine.gfx.Device, ITEM_HALF_W, ITEM_HALF_W * 0.42f);
 
-    // ── Material 생성 (강의: 같은 ShaderSet 공유, 색상만 다름) ─
+    // ── Material 생성 ( 같은 ShaderSet 공유, 색상만 다름) ─
     // BlinkRenderer 가 색상을 실시간으로 바꾸므로 playerMat 는 ColorMaterial* 로 보관
     ColorMaterial* playerMat = new ColorMaterial(shaders, { 0.3f, 0.8f, 1.0f, 1.0f }, gEngine.gfx.Device); // 하늘색
     ColorMaterial* obsMat = new ColorMaterial(shaders, { 1.0f, 0.5f, 0.2f, 1.0f }, gEngine.gfx.Device); // 빨간색
@@ -1676,8 +1674,8 @@ int WINAPI WinMain(HINSTANCE hI, HINSTANCE, LPSTR, int)
     
     player->AddComponent(new MeshRenderer(playerMesh, playerMat));
     player->AddComponent(new PlayerController());
-    player->AddComponent(new BlinkRenderer(playerMat));         // 무적 깜빡임 (B 담당)
-    player->AddComponent(new CooldownBarRenderer(gEngine.win.hWnd)); // 게이지 UI (B 담당)
+    player->AddComponent(new BlinkRenderer(playerMat));         // 무적 깜빡임
+    player->AddComponent(new CooldownBarRenderer(gEngine.win.hWnd)); // 게이지 UI 
     player->AddComponent(new ShieldRenderer(gEngine.win.hWnd));
     player->AddComponent(trail);
     auto* pc = dynamic_cast<PlayerController*>(player->components[1]);
@@ -1699,7 +1697,7 @@ int WINAPI WinMain(HINSTANCE hI, HINSTANCE, LPSTR, int)
 
     gEngine.Run();
 
-    // ── 공유 리소스 해제 (소유자 WinMain 이 마지막에) ────
+    // ── 공유 리소스 해제 ────
     delete playerMat;
     delete obsMat;
     delete itemMat;
