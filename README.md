@@ -1,5 +1,12 @@
  Dodge++ - 개발 보고서 및 README
 
+■ 팀 정보
+  - 팀명: Two Twenty One
+  - 팀원: 12211586 (김정일), 12211645 (안시헌)
+  - GitHub: https://github.com/kimjeong1/Dodge_gamprogramming_26-1
+
+----------------------------------------------------------------------------------------------------------
+
 ■ 프로젝트 개요
   - 프로젝트명: Dodge++
   - 개발 언어 및 환경: C++ / Windows API / DirectX 11 (Direct3D 11)
